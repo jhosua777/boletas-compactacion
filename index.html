@@ -46,7 +46,7 @@ td input.pct{width:64px;font-weight:800}td input.dens{width:84px;font-weight:700
 .boleta table.inter td{text-align:right;font-weight:400}
 .firmas{display:flex;gap:4.2mm;margin:5mm 0 4mm 48mm}.firma{flex:0 0 43.5mm;text-align:center;font-size:10pt}.firma .esp{height:24mm;position:relative}.firma .esp img{width:32mm;height:23mm;position:absolute;left:50%;transform:translateX(-50%);bottom:0}.firma .raya{border-top:1.5px solid #000;padding-top:6px}
 .boleta .subpanel,.boleta table{page-break-inside:avoid}
-@media print{body{background:#fff}header,main>.card.no-print{display:none!important}main{max-width:none;padding:0}#salida{box-shadow:none;border:0;padding:0}.boleta{margin:0;border:0}}
+@media print{body{background:#fff}header,main>.card.no-print{display:none!important}main{max-width:none;padding:0}#salida{box-shadow:none;border:0;padding:0}.boleta{margin:0;border:0}.boleta .subpanel,.boleta table{page-break-inside:auto}.boleta .firmas{page-break-inside:avoid}}
 </style></head><body>
 <header><h1>🗜️ Boletas de Compactación</h1><p>Mismo formato de la boleta original — tú solo cambias los datos. Todo se calcula solo, en tu dispositivo, sin esperas.</p></header>
 <main>
@@ -291,7 +291,7 @@ async function paginasFilas(pdf){
     items.sort((a,b)=>b.y-a.y||a.x-b.x);
     const filas=[];
     for(const it of items){const ult=filas[filas.length-1];
-      if(ult&&Math.abs(it.y-ult[0].y)<=4)ult.push(it);else filas.push([it])}
+      if(ult&&Math.abs(it.y-ult[ult.length-1].y)<=4)ult.push(it);else filas.push([it])}
     for(const f of filas)f.sort((a,b)=>a.x-b.x);
     pags.push(filas)}
   return pags;
