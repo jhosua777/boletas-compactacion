@@ -298,6 +298,8 @@ async function paginasFilas(pdf){
 }
 function textoDeFilas(pags){return pags.map(fs=>fs.map(f=>f.map(i=>i.s).join(' ')).join('\n')).join('\n')}
 function esEtiquetaEn(row,j){
+  const up0=row[j].s.toUpperCase();
+  for(const L of ETIQUETAS){if(up0===L||up0.startsWith(L+' '))return true}
   let acc='';
   for(let k=j;k<Math.min(j+3,row.length);k++){acc=(acc?acc+' ':'')+row[k].s.toUpperCase();if(ETIQUETAS.has(acc))return true;if(acc.length>22)break}
   return false;
@@ -305,6 +307,8 @@ function esEtiquetaEn(row,j){
 function valorPorPosicion(filas,label){
   for(let ri=0;ri<filas.length;ri++){const row=filas[ri];
     for(let ii=0;ii<row.length;ii++){
+      const upI=row[ii].s.toUpperCase();
+      if(upI.startsWith(label+' ')){const resto=row[ii].s.slice(label.length).trim();if(resto)return resto}
       let acc='',fin=-1;
       for(let k=ii;k<Math.min(ii+3,row.length);k++){acc=(acc?acc+' ':'')+row[k].s.toUpperCase();if(acc===label){fin=k;break}}
       if(fin<0)continue;
@@ -332,7 +336,8 @@ async function usarBase(idx,btn){
     const cs=txt.match(/Código de servicio:\s*(\d+)/);if(cs)$('codserv').value=cs[1];
     const mapa={CLIENTE:'cliente',OBRA:'obra','DIRECCIÓN':'direccion','CÓDIGO OBRA':'codobra',COMUNA:'comuna','HORA DE LLEGADA':'hllegada','HORA DE SALIDA':'hsalida','SERVICIO REALIZADO':'servicio'};
     for(const lab in mapa){let v=valorPorPosicion(filas1,lab);
-      if(lab.includes('HORA')){const mh=v.match(/\d{1,2}:\d{2}/);v=mh?mh[0]:''}
+      if(lab.includes('HORA')){const mh=v.match(/\d{1,2}:\d{2}/);v=mh?mh[0]:'';
+        if(!v){const fb=txt.match(new RegExp(lab+'\\s+(\\d{1,2}:\\d{2})','i'));if(fb)v=fb[1]}}
       if(v&&!ETIQUETAS.has(v.toUpperCase()))$(mapa[lab]).value=v}
     const fi=fechaISO(txt);if(fi)$('fecha').value=fi;
     const r1=valorPorPosicion(filas1,'RESPONSABLE');if(r1&&!ETIQUETAS.has(r1.toUpperCase()))$('resp').value=r1;
